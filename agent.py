@@ -143,9 +143,9 @@ def render(plan, sources, dest, demo, voice):
             else:
                 input_args = ["-stream_loop", "-1", "-i", str(source)]
             filter_text = "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,fps=30[base];[base][1:v]overlay=0:0:format=auto,format=yuv420p[out]"
-            run(["ffmpeg", "-y", "-loglevel", "error", *input_args, "-loop", "1", "-i", str(overlay),
+            run(["ffmpeg", "-y", "-loglevel", "error", "-filter_threads", "1", *input_args, "-loop", "1", "-i", str(overlay),
                  "-filter_complex", filter_text, "-map", "[out]", "-t", str(duration),
-                 "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", str(segment)])
+                 "-an", "-c:v", "libx264", "-threads", "1", "-preset", "ultrafast", "-crf", "24", "-pix_fmt", "yuv420p", str(segment)])
             segments.append(segment)
         listing = tmp / "concat.txt"
         listing.write_text("".join("file '" + str(x) + "'\n" for x in segments))
