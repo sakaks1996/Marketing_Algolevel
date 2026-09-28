@@ -38,7 +38,7 @@ def local_plan(topic):
     subject = topic.strip()[:42]
     return {
         "topic": topic,
-        "format": "1080x1920, 24 seconds, 9:16",
+        "format": "720x1280, 24 seconds, 9:16",
         "voiceover": f"Let's look at {subject}. Here is the chart before and after AlgoLevel is turned on. You can inspect the displayed levels directly on your chart. See how it works at AlgoLevel dot com.",
         "caption": "See AlgoLevel on a real TradingView chart. Explore the indicator at AlgoLevel.com. #TradingView #ChartAnalysis #SupportAndResistance #AlgoLevel",
         "thumbnail": "SEE THE LEVELS",
@@ -61,7 +61,7 @@ def ai_plan(topic):
                                     "messages": [{"role": "user", "content": prompt}]})
     plan = json.loads(data["choices"][0]["message"]["content"])
     validate(plan)
-    plan["format"] = "1080x1920, 24 seconds, 9:16"
+    plan["format"] = "720x1280, 24 seconds, 9:16"
     return plan
 
 
@@ -142,7 +142,7 @@ def render(plan, sources, dest, demo, voice):
                 input_args = ["-f", "lavfi", "-i", "color=c=0x14243b:s=1080x1920:r=30"]
             else:
                 input_args = ["-stream_loop", "-1", "-i", str(source)]
-            filter_text = "[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,fps=30[base];[base][1:v]overlay=0:0:format=auto,format=yuv420p[out]"
+            filter_text = "[0:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,setsar=1,fps=30[base];[1:v]scale=720:1280[over];[base][over]overlay=0:0:format=auto,format=yuv420p[out]"
             run(["ffmpeg", "-y", "-loglevel", "error", "-filter_threads", "1", *input_args, "-loop", "1", "-i", str(overlay),
                  "-filter_complex", filter_text, "-map", "[out]", "-t", str(duration),
                  "-an", "-c:v", "libx264", "-threads", "1", "-preset", "ultrafast", "-crf", "24", "-pix_fmt", "yuv420p", str(segment)])
